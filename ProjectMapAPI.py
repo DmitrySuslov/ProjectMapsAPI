@@ -1,16 +1,19 @@
 import os
 import sys
 import requests
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
+from PyQt5 import uic
 
 
 SCREEN_SIZE = [600, 450]
 
 
-class ProgectMapAPI(QWidget):
+class ProgectMapAPI(QMainWindow):
     def __init__(self):
+        super().__init__()
+        uic.loadUi('UIProjectMapsAPI.ui', self)
         self.geocoder_request = "http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba" \
                                 "-98533de7710b&geocode=Москва&format=json"
         self.response = requests.get(self.geocoder_request).json()
@@ -20,7 +23,7 @@ class ProgectMapAPI(QWidget):
             'z': '3',
             'l': 'map'}
         self.map_file = "map.png"
-        super().__init__()
+
         self.initUI()
 
     def keyPressEvent(self, event):
@@ -56,7 +59,6 @@ class ProgectMapAPI(QWidget):
             coords[0], coords[1] = float(coords[0]), float(coords[1])
             coords[0] -= 2 * (1 / z)
             self.response_params['ll'] = ','.join(list(map(str, coords)))
-        print(self.response_params)
         self.getImage()
         self.setImage()
 
@@ -73,22 +75,16 @@ class ProgectMapAPI(QWidget):
 
     def setImage(self):
         self.pixmap = QPixmap(self.map_file)
-        self.image.setPixmap(self.pixmap)
-
+        self.map_label.setPixmap(self.pixmap)
 
     def initUI(self):
-        self.setGeometry(100, 100, *SCREEN_SIZE)
-        self.setWindowTitle('ProjectMapsAPI')
-        self.image = QLabel(self)
-        self.image.move(0, 0)
-        self.image.resize(600, 450)
         self.getImage()
         self.setImage()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ProgectMapAPI = ProgectMapAPI()
-    ProgectMapAPI.show()
+    ex = ProgectMapAPI()
+    ex.show()
     os.remove('map.png')
     sys.exit(app.exec())
