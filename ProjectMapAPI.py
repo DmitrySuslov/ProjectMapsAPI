@@ -7,9 +7,6 @@ from PyQt5.QtCore import Qt
 from PyQt5 import uic
 
 
-SCREEN_SIZE = [600, 450]
-
-
 class ProgectMapAPI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -21,10 +18,9 @@ class ProgectMapAPI(QMainWindow):
             'll': ','.join(self.response["response"]["GeoObjectCollection"]["featureMember"][0]
                            ["GeoObject"]["Point"]["pos"].split()),
             'z': '3',
-            'l': 'map'}
-        self.map_file = "map.png"
-
+            'l': self.find_map()}
         self.initUI()
+        self.comboBox.activated[str].connect(self.map_changed)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
@@ -62,12 +58,24 @@ class ProgectMapAPI(QMainWindow):
         self.getImage()
         self.setImage()
 
+    def find_map(self):
+        map = self.comboBox.currentText()
+        if map == 'Схема':
+            return 'map'
+        elif map == 'Спутник':
+            return 'sat'
+        elif map == 'Гибрид':
+            return 'sat,skl'
+
+    def map_changed(self):
+        self.getImage()
+        self.setImage()
 
     def getImage(self):
+        self.map_file = 'map.png'
         map_request = f"http://static-maps.yandex.ru/1.x/?ll={self.response_params['ll']}&" \
-                      f"z={self.response_params['z']}&l={self.response_params['l']}"
+                      f"z={self.response_params['z']}&l={self.find_map()}"
         self.map_response = requests.get(map_request)
-
         # Запишем полученное изображение в файл.
         if self.map_response:
             with open(self.map_file, "wb") as file:
