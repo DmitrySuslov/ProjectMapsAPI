@@ -30,6 +30,33 @@ class ProgectMapAPI(QWidget):
         if event.key() == Qt.Key_PageDown:
             if int(self.response_params['z']) > 2:
                 self.response_params['z'] = int(self.response_params['z']) - 1
+        if event.key() == Qt.Key_Up:
+            coords = self.response_params['ll'].split(',')
+            z = int(self.response_params['z'])
+            coords[0], coords[1] = float(coords[0]), float(coords[1])
+            if coords[1] + 2 * (1 / z) <= 80:
+                coords[1] += 2 * (1 / z)
+                self.response_params['ll'] = ','.join(list(map(str, coords)))
+        if event.key() == Qt.Key_Right:
+            coords = self.response_params['ll'].split(',')
+            z = int(self.response_params['z'])
+            coords[0], coords[1] = float(coords[0]), float(coords[1])
+            coords[0] += 2 * (1 / z)
+            self.response_params['ll'] = ','.join(list(map(str, coords)))
+        if event.key() == Qt.Key_Down:
+            coords = self.response_params['ll'].split(',')
+            z = int(self.response_params['z'])
+            coords[0], coords[1] = float(coords[0]), float(coords[1])
+            if coords[1] - 2 * (1 / z) >= -70:
+                coords[1] -= 2 * (1 / z)
+                self.response_params['ll'] = ','.join(list(map(str, coords)))
+        if event.key() == Qt.Key_Left:
+            coords = self.response_params['ll'].split(',')
+            z = int(self.response_params['z'])
+            coords[0], coords[1] = float(coords[0]), float(coords[1])
+            coords[0] -= 2 * (1 / z)
+            self.response_params['ll'] = ','.join(list(map(str, coords)))
+        print(self.response_params)
         self.getImage()
         self.setImage()
 
