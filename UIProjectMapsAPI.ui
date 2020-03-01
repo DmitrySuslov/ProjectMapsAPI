@@ -14,31 +14,6 @@
    <string>ProjectMapsAPI</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QComboBox" name="comboBox">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>130</y>
-      <width>131</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>Схема</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Спутник</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Гибрид</string>
-     </property>
-    </item>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -85,7 +60,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Найти</string>
     </property>
    </widget>
   </widget>
