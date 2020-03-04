@@ -7,8 +7,6 @@ from PyQt5.QtCore import Qt
 from PyQt5 import uic
 
 
-
-
 class ProgectMapAPI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -55,14 +53,17 @@ class ProgectMapAPI(QMainWindow):
     def find_map(self):
         map = self.comboBox.currentText()
         if map == 'Схема':
+            self.map_file = "map.png"
             return 'map'
         elif map == 'Спутник':
+            self.map_file = "map.jpg"
             return 'sat'
         elif map == 'Гибрид':
+            self.map_file = "map.jpg"
             return 'sat,skl'
 
     def map_changed(self):
-        self.getImage()
+        self.getImage(0)
         self.setImage()
 
     def getImage(self, b):
@@ -100,7 +101,6 @@ class ProgectMapAPI(QMainWindow):
         self.getImage(0)
         self.setImage()
 
-
     def initUI(self):
         self.search.clicked.connect(self.searching)
         self.object = 'Москва'
@@ -115,4 +115,5 @@ if __name__ == '__main__':
     ProgectMapAPI = ProgectMapAPI()
     ProgectMapAPI.show()
     os.remove('map.png')
+    os.remove('map.jpg')
     sys.exit(app.exec())
