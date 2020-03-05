@@ -95,7 +95,6 @@ class ProgectMapAPI(QMainWindow):
             file.write(self.map_response.content)
             file.close()
 
-
     def set_address(self, response):
         address = (response["response"]["GeoObjectCollection"]["featureMember"]
                         [0]["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]["text"])
