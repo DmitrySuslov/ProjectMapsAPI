@@ -124,5 +124,5 @@ if __name__ == '__main__':
     ProgectMapAPI = ProgectMapAPI()
     ProgectMapAPI.show()
     os.remove('map.png')
-    os.remove('map.jpg')
+  #  os.remove('map.jpg')
     sys.exit(app.exec())
