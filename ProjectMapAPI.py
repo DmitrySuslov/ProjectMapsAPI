@@ -83,14 +83,23 @@ class ProgectMapAPI(QMainWindow):
             'l': self.find_map(),
             'pt': ",".join([str(self.coords[0]), str(self.coords[1]), "pm2dom"])}
 
+        self.set_address(self.response)
+
         map_request = f"http://static-maps.yandex.ru/1.x/?ll={self.response_params['ll']}&" \
                       f"z={self.response_params['z']}&l={self.response_params['l']}&pt={self.response_params['pt']}"
 
         self.map_response = requests.get(map_request)
 
         if self.map_response:
-            with open(self.map_file, "wb") as file:
-                file.write(self.map_response.content)
+            file = open(self.map_file, "wb")
+            file.write(self.map_response.content)
+            file.close()
+
+
+    def set_address(self, response):
+        address = (response["response"]["GeoObjectCollection"]["featureMember"]
+                        [0]["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]["text"])
+        self.object_address.setText(address)
 
     def setImage(self):
         self.pixmap = QPixmap(self.map_file)
