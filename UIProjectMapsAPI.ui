@@ -103,7 +103,7 @@
      <string>Найти</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBox">
+   <widget class="QCheckBox" name="indexFlag">
     <property name="geometry">
      <rect>
       <x>10</x>

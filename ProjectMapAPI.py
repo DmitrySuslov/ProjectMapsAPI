@@ -1,7 +1,7 @@
 import os
 import sys
 import requests
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QCheckBox
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
@@ -12,7 +12,9 @@ class ProgectMapAPI(QMainWindow):
         super().__init__()
         uic.loadUi('UIProjectMapsAPI.ui', self)
         self.initUI()
+        self.index = False
         self.comboBox.activated[str].connect(self.map_changed)
+        self.indexFalg.stateChanged(self.chenge_index)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
@@ -49,6 +51,16 @@ class ProgectMapAPI(QMainWindow):
             self.ll = ','.join(list(map(str, coords)))
         self.getImage(1)
         self.setImage()
+
+    def change_index(self, state):
+        if state == Qt.Checked:
+            self.index = True
+        else:
+            self.index = False
+        self.research()
+
+    def research(self):
+        pass
 
     def find_map(self):
         map = self.comboBox.currentText()
