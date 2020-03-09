@@ -6,6 +6,11 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
 
+response_params = {
+            'll': '...',
+            'z': '...',
+            'l': '...',
+            'pt': '...'}
 
 class ProgectMapAPI(QMainWindow):
     def __init__(self):
@@ -16,38 +21,38 @@ class ProgectMapAPI(QMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
-            if self.map_response and int(self.response_params['z']) < 17:
-                self.z += 1
+            if self.map_response and int(response_params['z']) < 17:
+                response_params['z'] += 1
         if event.key() == Qt.Key_PageDown:
-            if int(self.response_params['z']) > 2:
-                self.z -= 1
+            if int(response_params['z']) > 2:
+                response_params['z'] -= 1
         if event.key() == Qt.Key_Up:
-            coords = self.response_params['ll'].split(',')
-            z = int(self.response_params['z'])
+            coords = response_params['ll'].split(',')
+            z = int(response_params['z'])
             coords[0], coords[1] = float(coords[0]), float(coords[1])
             if coords[1] + 2 * (1 / z) <= 80:
                 coords[1] += 2 * (1 / z)
-                self.ll = ','.join(list(map(str, coords)))
+                response_params['ll'] = ','.join(list(map(str, coords)))
         if event.key() == Qt.Key_Right:
-            coords = self.response_params['ll'].split(',')
-            z = int(self.response_params['z'])
+            coords = response_params['ll'].split(',')
+            z = int(response_params['z'])
             coords[0], coords[1] = float(coords[0]), float(coords[1])
             coords[0] += 2 * (1 / z)
-            self.ll = ','.join(list(map(str, coords)))
+            response_params['ll'] = ','.join(list(map(str, coords)))
         if event.key() == Qt.Key_Down:
-            coords = self.response_params['ll'].split(',')
-            z = int(self.response_params['z'])
+            coords = response_params['ll'].split(',')
+            z = int(response_params['z'])
             coords[0], coords[1] = float(coords[0]), float(coords[1])
             if coords[1] - 2 * (1 / z) >= -70:
                 coords[1] -= 2 * (1 / z)
-                self.ll = ','.join(list(map(str, coords)))
+                response_params['ll'] = ','.join(list(map(str, coords)))
         if event.key() == Qt.Key_Left:
-            coords = self.response_params['ll'].split(',')
-            z = int(self.response_params['z'])
+            coords = response_params['ll'].split(',')
+            z = int(response_params['z'])
             coords[0], coords[1] = float(coords[0]), float(coords[1])
             coords[0] -= 2 * (1 / z)
-            self.ll = ','.join(list(map(str, coords)))
-        self.getImage(1)
+            response_params['ll'] = ','.join(list(map(str, coords)))
+        self.getImage()
         self.setImage()
 
     def find_map(self):
@@ -63,28 +68,24 @@ class ProgectMapAPI(QMainWindow):
             return 'sat,skl'
 
     def map_changed(self):
-        self.getImage(0)
+        self.getPlace()
+        self.getImage()
         self.setImage()
 
-    def getImage(self, b):
+    def getPlace(self):
         self.geocoder_request = "http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba" \
                                 f"-98533de7710b&geocode={self.object}&format=json"
         self.response = requests.get(self.geocoder_request).json()
-        self.coords = self.response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"].split()
-        if not b:
-            ll = ','.join(self.response["response"]["GeoObjectCollection"]["featureMember"][0]
-                           ["GeoObject"]["Point"]["pos"].split())
-            self.ll = ll
-        else:
-            ll = self.ll
-        self.response_params = {
-            'll': self.ll,
-            'z': self.z,
-            'l': self.find_map(),
-            'pt': ",".join([str(self.coords[0]), str(self.coords[1]), "pm2dom"])}
+        self.coords = self.response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"][
+            "pos"].split()
+        response_params['ll'] = ','.join(self.response["response"]["GeoObjectCollection"]["featureMember"][0]
+                        ["GeoObject"]["Point"]["pos"].split())
+        response_params['l'] = self.find_map()
+        response_params['pt'] = ",".join([str(self.coords[0]), str(self.coords[1]), "pm2dom"])
 
-        map_request = f"http://static-maps.yandex.ru/1.x/?ll={self.response_params['ll']}&" \
-                      f"z={self.response_params['z']}&l={self.response_params['l']}&pt={self.response_params['pt']}"
+    def getImage(self):
+        map_request = f"http://static-maps.yandex.ru/1.x/?ll={response_params['ll']}&" \
+                      f"z={response_params['z']}&l={response_params['l']}&pt={response_params['pt']}"
 
         self.map_response = requests.get(map_request)
 
@@ -98,15 +99,21 @@ class ProgectMapAPI(QMainWindow):
 
     def searching(self):
         self.object = self.address.text()
-        self.getImage(0)
+        self.getPlace()
+        self.getImage()
         self.setImage()
+
+    def clear(self):
+        pass
 
     def initUI(self):
         self.search.clicked.connect(self.searching)
+        self.clearButton.clicked.connect(self.clear)
         self.object = 'Москва'
         self.map_file = "map.png"
-        self.z = 4
-        self.getImage(0)
+        self.getPlace()
+        response_params['z'] = 4
+        self.getImage()
         self.setImage()
 
 
