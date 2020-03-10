@@ -12,6 +12,7 @@ response_params = {
             'l': '...',
             'pt': '...'}
 
+
 class ProgectMapAPI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -81,11 +82,14 @@ class ProgectMapAPI(QMainWindow):
         response_params['ll'] = ','.join(self.response["response"]["GeoObjectCollection"]["featureMember"][0]
                         ["GeoObject"]["Point"]["pos"].split())
         response_params['l'] = self.find_map()
-        response_params['pt'] = ",".join([str(self.coords[0]), str(self.coords[1]), "pm2dom"])
 
     def getImage(self):
-        map_request = f"http://static-maps.yandex.ru/1.x/?ll={response_params['ll']}&" \
+        if response_params:
+            map_request = f"http://static-maps.yandex.ru/1.x/?ll={response_params['ll']}&" \
                       f"z={response_params['z']}&l={response_params['l']}&pt={response_params['pt']}"
+        else:
+            map_request = f"http://static-maps.yandex.ru/1.x/?ll={response_params['ll']}&" \
+                      f"z={response_params['z']}&l={response_params['l']}"
 
         self.map_response = requests.get(map_request)
 
@@ -98,13 +102,19 @@ class ProgectMapAPI(QMainWindow):
         self.map_label.setPixmap(self.pixmap)
 
     def searching(self):
+        self.clearButton.setEnabled(True)
         self.object = self.address.text()
         self.getPlace()
+        response_params['pt'] = ",".join([str(self.coords[0]), str(self.coords[1]), "pm2dom"])
         self.getImage()
         self.setImage()
 
     def clear(self):
-        pass
+        self.clearButton.setEnabled(False)
+        response_params['pt'] = ''
+        self.address.clear()
+        self.getImage()
+        self.setImage()
 
     def initUI(self):
         self.search.clicked.connect(self.searching)
