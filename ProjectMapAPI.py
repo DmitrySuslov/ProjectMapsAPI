@@ -69,20 +69,25 @@ class ProgectMapAPI(QMainWindow):
             return 'sat,skl'
 
     def map_changed(self):
-        self.getPlace()
-        self.getImage()
-        self.setImage()
+        if self.getPlace():
+            self.getImage()
+            self.setImage()
 
     def getPlace(self):
         self.geocoder_request = "http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba" \
                                 f"-98533de7710b&geocode={self.object}&format=json"
         self.response = requests.get(self.geocoder_request).json()
-        self.coords = self.response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"][
-            "pos"].split()
-        self.set_address(self.response)
-        response_params['ll'] = ','.join(self.response["response"]["GeoObjectCollection"]["featureMember"][0]
-                        ["GeoObject"]["Point"]["pos"].split())
-        response_params['l'] = self.find_map()
+        found = self.response["response"]["GeoObjectCollection"]["metaDataProperty"]["GeocoderResponseMetaData"]["found"]
+
+        if int(found):
+            self.coords = self.response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"][
+                "pos"].split()
+            self.set_address(self.response)
+            response_params['ll'] = ','.join(self.response["response"]["GeoObjectCollection"]["featureMember"][0]
+                            ["GeoObject"]["Point"]["pos"].split())
+            response_params['l'] = self.find_map()
+            return True
+        return False
 
     def getImage(self):
         map_request = f"http://static-maps.yandex.ru/1.x/?ll={response_params['ll']}&" \
@@ -106,16 +111,18 @@ class ProgectMapAPI(QMainWindow):
 
     def searching(self):
         self.clearButton.setEnabled(True)
-        self.object = self.address.text()
-        self.getPlace()
-        response_params['pt'] = ",".join([str(self.coords[0]), str(self.coords[1]), "pm2dom"])
-        self.getImage()
-        self.setImage()
+        if self.address.text():
+            self.object = self.address.text()
+        if self.getPlace():
+            response_params['pt'] = ",".join([str(self.coords[0]), str(self.coords[1]), "pm2dom"])
+            self.getImage()
+            self.setImage()
 
     def clear(self):
         self.clearButton.setEnabled(False)
         response_params['pt'] = ''
         self.address.clear()
+        self.object_address.clear()
         self.getImage()
         self.setImage()
 
@@ -124,10 +131,10 @@ class ProgectMapAPI(QMainWindow):
         self.clearButton.clicked.connect(self.clear)
         self.object = 'Москва'
         self.map_file = "map.png"
-        self.getPlace()
         response_params['z'] = 4
-        self.getImage()
-        self.setImage()
+        if self.getPlace():
+            self.getImage()
+            self.setImage()
 
 
 if __name__ == '__main__':
