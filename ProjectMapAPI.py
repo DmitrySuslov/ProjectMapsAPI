@@ -79,23 +79,26 @@ class ProgectMapAPI(QMainWindow):
         self.response = requests.get(self.geocoder_request).json()
         self.coords = self.response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"][
             "pos"].split()
+        self.set_address(self.response)
         response_params['ll'] = ','.join(self.response["response"]["GeoObjectCollection"]["featureMember"][0]
                         ["GeoObject"]["Point"]["pos"].split())
         response_params['l'] = self.find_map()
 
     def getImage(self):
-        if response_params:
-            map_request = f"http://static-maps.yandex.ru/1.x/?ll={response_params['ll']}&" \
-                      f"z={response_params['z']}&l={response_params['l']}&pt={response_params['pt']}"
-        else:
-            map_request = f"http://static-maps.yandex.ru/1.x/?ll={response_params['ll']}&" \
-                      f"z={response_params['z']}&l={response_params['l']}"
+        map_request = f"http://static-maps.yandex.ru/1.x/?ll={response_params['ll']}&" \
+                    f"z={response_params['z']}&l={response_params['l']}&pt={response_params['pt']}"
 
         self.map_response = requests.get(map_request)
 
         if self.map_response:
-            with open(self.map_file, "wb") as file:
-                file.write(self.map_response.content)
+            file = open(self.map_file, "wb")
+            file.write(self.map_response.content)
+            file.close()
+
+    def set_address(self, response):
+        address = (response["response"]["GeoObjectCollection"]["featureMember"]
+                        [0]["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]["text"])
+        self.object_address.setText(address)
 
     def setImage(self):
         self.pixmap = QPixmap(self.map_file)
