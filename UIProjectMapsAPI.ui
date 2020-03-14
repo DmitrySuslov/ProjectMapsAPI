@@ -103,17 +103,46 @@
      <string>Найти</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="indexFlag">
+   <widget class="QPushButton" name="clearButton">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>410</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сбросить</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="object_address">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>470</y>
-      <width>181</width>
+      <y>450</y>
+      <width>731</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 8pt &quot;MS Reference Sans Serif&quot;;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>500</y>
+      <width>201</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>Показывать почтовый индекс</string>
+     <string>Приписывать почтовый индекс</string>
     </property>
    </widget>
   </widget>
