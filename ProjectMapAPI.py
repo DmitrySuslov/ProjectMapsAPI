@@ -24,6 +24,7 @@ class ProgectMapAPI(QMainWindow):
 
     def change_indexing(self, state):
         self.indexing = state == Qt.Checked
+        self.map_changed()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
